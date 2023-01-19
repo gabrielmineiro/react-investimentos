@@ -37,7 +37,7 @@ const Calculadora = () => {
       investimentos[1] = "...";
       investimentos[15] = "...";
       investimentos[30] = "...";
-      investimentos[90] = "..";
+      investimentos[90] = "...";
     }
   }, [investimentos, parcelas, valor, mdr, days]);
 
