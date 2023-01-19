@@ -1,10 +1,10 @@
 import "./App.css";
 
-import Calculadora from "./components/calculadora";
+import Calculator from "./components/calculator";
 import Offline from "./components/offline";
 
 function App() {
-  return navigator.onLine ? <Calculadora /> : <Offline />;
+  return navigator.onLine ? <Calculator /> : <Offline />;
 }
 
 export default App;

@@ -60,7 +60,7 @@ export const DivForm = styled.div`
   }
 `;
 
-export const DivRetorno = styled.div`
+export const DivReturn = styled.div`
   width: 40.5%;
   height: 100%;
   background-color: rgb(230, 229, 229);

@@ -1,17 +1,33 @@
-import { Div, DivForm, DivRetorno, Span } from "./styled";
+import { Div, DivForm, DivReturn, Span } from "./styled";
 
 import { AiOutlineCalculator } from "react-icons/ai";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const Calculadora = () => {
-  const [investimentos, setInvestimentos] = useState([]);
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-  const [valor, setValor] = useState(0);
-  const [parcelas, setParcelas] = useState(0);
+const Calculator = () => {
+  const [investments, setInvestiments] = useState([]);
+
+  const [value, setValue] = useState(0);
+  const [installments, setInstallments] = useState(0);
   const [mdr, setMdr] = useState(0);
   const [days, setDays] = useState(undefined);
+
+  const error = (message) => {
+    toast.error(`${message}`, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  };
 
   useEffect(() => {
     let dayNumberArray = [];
@@ -22,24 +38,24 @@ const Calculadora = () => {
         !isNaN(parseInt(day)) ? dayNumberArray.push(parseInt(day)) : day
       );
     }
-    if (valor >= 1000 && parcelas > 0 && mdr < 100 && mdr >= 0) {
+    if (value >= 1000 && installments > 0 && mdr < 100 && mdr >= 0) {
       axios({
         method: "post",
         url: "https://frontend-challenge-7bu3nxh76a-uc.a.run.app",
         data: {
-          amount: valor,
-          installments: parcelas,
+          amount: value,
+          installments: installments,
           mdr: mdr,
           days: days !== undefined ? dayNumberArray : [1, 15, 30, 90],
         },
-      }).then((res) => setInvestimentos(res.data));
+      }).then((res) => setInvestiments(res.data));
     } else {
-      investimentos[1] = "...";
-      investimentos[15] = "...";
-      investimentos[30] = "...";
-      investimentos[90] = "...";
+      investments[1] = "...";
+      investments[15] = "...";
+      investments[30] = "...";
+      investments[90] = "...";
     }
-  }, [investimentos, parcelas, valor, mdr, days]);
+  }, [investments, installments, value, mdr, days]);
 
   let arrayNumberDay = [];
   if (days) {
@@ -56,6 +72,7 @@ const Calculadora = () => {
   return (
     <Div>
       <DivForm>
+        <ToastContainer />
         <p>
           <AiOutlineCalculator size={"30px"} />
           Simule sua Antecipação
@@ -65,13 +82,15 @@ const Calculadora = () => {
         <input
           type="text"
           name="valor"
-          value={valor}
+          value={value}
           onChange={(event) => {
-            setValor(event.target.value);
+            setValue(event.target.value);
           }}
         />
-        {valor < 1000 ? (
-          <Span>Valor deve ser maior ou igual a 1000</Span>
+        {value < 1000 ? (
+          <>
+            <Span>Valor deve ser maior ou igual a 1000</Span>
+          </>
         ) : (
           <Span></Span>
         )}
@@ -80,13 +99,16 @@ const Calculadora = () => {
         <input
           type="number"
           name="parcelas"
-          value={parcelas}
+          value={installments}
           onChange={(event) => {
-            setParcelas(event.target.value);
+            setInstallments(event.target.value);
           }}
         />
-        {parcelas < 1 ? (
-          <Span>Mínimo de 1 parcela e máximo de 12</Span>
+        {installments > 12 ? (
+          <>
+            {error("O número máximo de parcelas é 12")}
+            <Span>Mínimo de 1 parcela e máximo de 12</Span>
+          </>
         ) : (
           <Span />
         )}
@@ -101,7 +123,14 @@ const Calculadora = () => {
           }}
           required
         />
-        {mdr > 100 ? <Span>O valor máximo de MDR é 100</Span> : <Span />}
+        {mdr > 100 ? (
+          <>
+            {error("O máximo de mdr é 100")}
+            <Span>O valor máximo de MDR é 100</Span>
+          </>
+        ) : (
+          <Span />
+        )}
 
         <label htmlFor="days">Número de dias para recebimento</label>
         <input
@@ -115,35 +144,35 @@ const Calculadora = () => {
           obrigatório"
         />
       </DivForm>
-      <DivRetorno>
+      <DivReturn>
         <div>
           <i className="title">Você receberá:</i>
           {days !== undefined ? (
             arrayNumberDay.map((day) => (
               <i>
-                Em {day} dias:<b> R${investimentos[day]}</b>
+                Em {day} dias:<b> R${investments[day]}</b>
               </i>
             ))
           ) : (
             <>
               <i>
-                Amanhã:<b> R${investimentos[1]}</b>
+                Amanhã:<b> R${investments[1]}</b>
               </i>
               <i>
-                Em 15 dias:<b> R${investimentos[15]}</b>
+                Em 15 dias:<b> R${investments[15]}</b>
               </i>
               <i>
-                Em 30 dias:<b> R${investimentos[30]}</b>
+                Em 30 dias:<b> R${investments[30]}</b>
               </i>
               <i>
-                Em 90 dias:<b> R${investimentos[90]}</b>
+                Em 90 dias:<b> R${investments[90]}</b>
               </i>
             </>
           )}
         </div>
-      </DivRetorno>
+      </DivReturn>
     </Div>
   );
 };
 
-export default Calculadora;
+export default Calculator;
